@@ -1,4 +1,7 @@
-package Service_TkLaptopFromReques;
+package SearchLaptopFromReques;
+
+import SearchLaptopFromReques.models.LaptopEntity;
+import SearchLaptopFromReques.services.LaptopService;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,17 +28,17 @@ public class Test {
             return;
         }
 
-        Service service = new Service(connection);
+        LaptopService laptopService = new LaptopService(connection);
 
-        List<LaptopEntityClass> laptopEntityClassListprice = service.FindLaptopFromPrice(10000000f,40000000f);
+        List<LaptopEntity> laptopEntityListprice = laptopService.FindLaptopFromPrice(10000000f,40000000f);
 
         System.out.println("Laptop theo gía từ 10.000.000 => 40.000.000 là: ");
-        for (LaptopEntityClass l : laptopEntityClassListprice) {
+        for (LaptopEntity l : laptopEntityListprice) {
             l.DisplayName();
         }
-        List<LaptopEntityClass> laptopEntityClassesListSSD_MAKER = service.FindLaptopFromSSD_MAKER("ACER","");
+        List<LaptopEntity> laptopEntityClassesListSSD_MAKER = laptopService.FindLaptopFromSSD_MAKER("ACER","");
         System.out.println("Laptop theo hãng và ssd là:");
-        for (LaptopEntityClass l: laptopEntityClassesListSSD_MAKER) {
+        for (LaptopEntity l: laptopEntityClassesListSSD_MAKER) {
             l.DisplayName();
         }
     }
