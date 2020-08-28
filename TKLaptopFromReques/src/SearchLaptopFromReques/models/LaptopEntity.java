@@ -1,6 +1,6 @@
-package Service_TkLaptopFromReques;
+package SearchLaptopFromReques.models;
 
-public class LaptopSvClass {
+public class LaptopEntity {
     private String name;
     private String url;
     private String maker;
@@ -15,7 +15,7 @@ public class LaptopSvClass {
     private float ScreenSize;
     private int sold;
 
-    public LaptopSvClass(String name, String url, String maker, String type, String ram, String cpu, String ssd, String hdd, float price, String card, String screenResolution, float screenSize, int sold) {
+    public LaptopEntity(String name, String url, String maker, String type, String ram, String cpu, String ssd, String hdd, float price, String card, String screenResolution, float screenSize, int sold) {
         this.name = name;
         this.url = url;
         this.maker = maker;

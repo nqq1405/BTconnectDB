@@ -1,14 +1,11 @@
 package Service_TkLaptopFromReques;
 
-import Service_TkLaptopFromReques.LaptopSvClass;
-import Service_TkLaptopFromReques.Service;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-public class App {
+public class Test {
     public static void main(String[] args) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -30,15 +27,15 @@ public class App {
 
         Service service = new Service(connection);
 
-        List<LaptopSvClass> laptopSvClassListprice = service.FindLaptopFromPrice(10000000,40000000);
+        List<LaptopEntityClass> laptopEntityClassListprice = service.FindLaptopFromPrice(10000000f,40000000f);
 
         System.out.println("Laptop theo gía từ 10.000.000 => 40.000.000 là: ");
-        for (LaptopSvClass l : laptopSvClassListprice) {
+        for (LaptopEntityClass l : laptopEntityClassListprice) {
             l.DisplayName();
         }
-        List<LaptopSvClass> laptopSvClassesListSSD_MAKER = service.FindLaptopFromSSD_MAKER("ACER","");
+        List<LaptopEntityClass> laptopEntityClassesListSSD_MAKER = service.FindLaptopFromSSD_MAKER("ACER","");
         System.out.println("Laptop theo hãng và ssd là:");
-        for (LaptopSvClass l: laptopSvClassesListSSD_MAKER) {
+        for (LaptopEntityClass l: laptopEntityClassesListSSD_MAKER) {
             l.DisplayName();
         }
     }
