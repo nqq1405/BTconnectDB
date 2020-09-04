@@ -17,9 +17,10 @@ public class LaptopService {
         this.conn = conn;
     }
 
-    public void EntityLaptop(List<LaptopEntity> laptopEntities, String SqlQuerryToDB) throws SQLException {
+    public List<LaptopEntity> EntityLaptop(String SqlQuerryToDB) throws SQLException {
         Statement statement = conn.createStatement();
         ResultSet resultSet = statement.executeQuery(SqlQuerryToDB);
+        List<LaptopEntity> laptopEntities = new ArrayList<>();
 
         while (resultSet.next()) {
             laptopEntities.add(new LaptopEntity(resultSet.getString(2),
@@ -38,6 +39,7 @@ public class LaptopService {
                     )
             );
         }
+        return laptopEntities;
     }
 
     //Follow price
@@ -51,7 +53,7 @@ public class LaptopService {
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
-            EntityLaptop(laptopEntities, sql);
+            EntityLaptop(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -68,11 +70,11 @@ public class LaptopService {
         String sql2 = "SELECT * FROM store_cms_plusplus.laptop WHERE maker =  '" + maker + "' OR ssd = '" + ssd + "';";
         try {
             if (maker == null) {
-                EntityLaptop(laptopEntities,sql1);
+                EntityLaptop(sql1);
             } else if (ssd == null) {
-                EntityLaptop(laptopEntities,sql1);
+                EntityLaptop(sql1);
             } else {
-                EntityLaptop(laptopEntities,sql2);
+                EntityLaptop(sql2);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -80,22 +82,61 @@ public class LaptopService {
         return laptopEntities;
     }
 
+    private String and(String sqlquerrywhere) {
+        if (sqlquerrywhere.endsWith("WHERE")) {
+            return " ";
+        } else return "AND";
+    }
+
+    private String querryfromprice(float pricefrom, float priceto) {
+        if (pricefrom == -1 && priceto == -1) {
+            return "1 = 1";
+        } else {
+            if (pricefrom == -1) {
+                return "price <= " + priceto;
+            }
+            if (priceto == -1) {
+                return "price >= " + pricefrom;
+            }
+            return "price BETWEEN " + pricefrom + " AND " + priceto;
+        }
+    }
+
     //Follow User From Fontend
-    public List<LaptopEntity> FindLaptopFromReques() {
+    public List<LaptopEntity> FindLaptopFromFilter(float pricefrom, float priceto, String maker, Float ScreenSize, String ram, String cpu, String type, String card, String selectsort, Boolean sort) {
         List<LaptopEntity> laptopList = new ArrayList<>();
-        String QuerryPrice = "WHERE price BETWEEN 10000000 AND 15000000;"; // or 3tr-10tr or 10tr-15tr or 15tr->
-        String QuerryMakerAcer = "WHERE maker = 'acer';"; // or APPLE or HP or ASUS
-        String QuerryScreenSize14inch = "WHERE screeen_size = 14"; // or 15,6 or 13
-        String QuerryRam4gb = "WHERE ram = 4gb"; // or 8gb
-        String QuerryCPUIntel = "WHERE cpu LIKE 'Intel%'"; // or intel pentium% or intel core%(i3i5i7)-(H,HQ,U,QM,M,MQ) or AMD ryzen%
-        String QuerryType = "WHERE type LIKE 'macbook%'"; //or vivobook or acer or Nitro
-        String QuerrySort = "ORDER BY price DESC"; // or Ram or Price or ssd or screen_size or sold or screen_resolution
-        String QuerryCard = "WHERE card LIKE 'Intel%"; // or NVIDA%( GeForce GTX% - RTX) or AMD%
 
-        String SqlQuerryToDB = "SELECT * FROM store_cms_plusplus.laptop";
-
+        String SqlQuerryToDB = "SELECT * FROM store_cms_plusplus.laptop WHERE";
+        if (pricefrom != -1 || priceto != -1) {
+            SqlQuerryToDB += querryfromprice(pricefrom, priceto);
+        }
+        if (maker != null) {
+            SqlQuerryToDB += and(SqlQuerryToDB) + "maker = '" + maker + "'";
+        }
+        if (ScreenSize != null){
+            SqlQuerryToDB += and(SqlQuerryToDB) + "screen_size = '" + ScreenSize.floatValue() + "'";
+        }
+        if (ram.isEmpty()){
+            SqlQuerryToDB += and(SqlQuerryToDB) + "screen_size = '" + ram + "'";
+        }
+        if (cpu.isEmpty()){
+            SqlQuerryToDB += and(SqlQuerryToDB) + "cpu LIKE '%"+ cpu + "%'";
+        }
+        if (type.isEmpty()){
+            SqlQuerryToDB += and(SqlQuerryToDB) + "type LIKE '%"+ type + "%'";
+        }
+        if (card.isEmpty()){
+            SqlQuerryToDB += and(SqlQuerryToDB) + "card LIKE '%"+ card + "%'";
+        }
+        if (selectsort.isEmpty()){
+            SqlQuerryToDB += "ORDER BY" + selectsort;
+            if (sort || sort == null){
+                SqlQuerryToDB += "ASC";
+            }else if (sort == false){ SqlQuerryToDB += "DESC";}
+        }
+        SqlQuerryToDB +=";";
         try {
-            EntityLaptop(laptopList,SqlQuerryToDB);
+            laptopList = EntityLaptop(SqlQuerryToDB);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -104,15 +145,19 @@ public class LaptopService {
 
     public List<LaptopEntity> FindLaptopsold() {
         List<LaptopEntity> laptopList = new ArrayList<>();
-        String SqlQuerryToDB = "SELECT * FROM store_cms_plusplus.laptop ORDER BY sold DESC";
-
+        String SqlQuerryToDB = "SELECT * FROM store_cms_plusplus.laptop ORDER BY sold DESC LIMIT 10";
         try {
-            EntityLaptop(laptopList,SqlQuerryToDB);
+           laptopList = EntityLaptop(SqlQuerryToDB);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
         return laptopList;
+    }
+
+    public void DisplayName(List<LaptopEntity> laptopEntityList){
+        for (LaptopEntity lt: laptopEntityList) {
+            System.out.println(lt.getName());
+        }
     }
 }
 
