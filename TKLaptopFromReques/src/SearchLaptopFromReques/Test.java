@@ -30,16 +30,12 @@ public class Test {
 
         LaptopService laptopService = new LaptopService(connection);
 
-        List<LaptopEntity> laptopEntityListprice = laptopService.FindLaptopFromPrice(10000000f,40000000f);
-
+        List<LaptopEntity> laptopEntityListPrice = laptopService.FindLaptopFromPrice(10000000f,40000000f);
         System.out.println("Laptop theo gía từ 10.000.000 => 40.000.000 là: ");
-        for (LaptopEntity l : laptopEntityListprice) {
-            l.DisplayName();
-        }
+        laptopService.DisplayName(laptopEntityListPrice);
+
         List<LaptopEntity> laptopEntityClassesListSSD_MAKER = laptopService.FindLaptopFromSSD_MAKER("ACER","");
         System.out.println("Laptop theo hãng và ssd là:");
-        for (LaptopEntity l: laptopEntityClassesListSSD_MAKER) {
-            l.DisplayName();
-        }
+        laptopService.DisplayName(laptopEntityClassesListSSD_MAKER);
     }
 }
