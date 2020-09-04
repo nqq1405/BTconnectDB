@@ -1,5 +1,7 @@
 package SearchLaptopFromReques.models;
 
+import java.util.List;
+
 public class LaptopEntity {
     private String name;
     private String url;
@@ -29,10 +31,6 @@ public class LaptopEntity {
         ScreenResolution = screenResolution;
         ScreenSize = screenSize;
         this.sold = sold;
-    }
-
-    public void DisplayName(){
-        System.out.println(name);
     }
 
     public String getName() {
