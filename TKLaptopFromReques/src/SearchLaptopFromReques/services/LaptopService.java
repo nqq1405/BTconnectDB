@@ -1,6 +1,8 @@
 package SearchLaptopFromReques.services;
 
+import SearchLaptopFromReques.models.Counter;
 import SearchLaptopFromReques.models.LaptopEntity;
+import SearchLaptopFromReques.models.Statistic;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,6 +19,7 @@ public class LaptopService {
         this.conn = conn;
     }
 
+    // enter LaptopEntity
     public List<LaptopEntity> EntityLaptop(String SqlQuerryToDB) throws SQLException {
         Statement statement = conn.createStatement();
         ResultSet resultSet = statement.executeQuery(SqlQuerryToDB);
@@ -42,22 +45,44 @@ public class LaptopService {
         return laptopEntities;
     }
 
+    // enter CounterEntity
+    public List<Counter> EntityCounter(String SqlQuerryToDB) throws SQLException {
+        Statement statement = conn.createStatement();
+        ResultSet resultSet = statement.executeQuery(SqlQuerryToDB);
+        List<Counter> counterEntities = new ArrayList<>();
+
+        while (resultSet.next()) {
+            counterEntities.add(new Counter(resultSet.getString("maker"),
+                            resultSet.getString("quantity")
+                    ));
+        }
+        return counterEntities;
+    }
+
+    // enter StatisticEntity
+    public List<Statistic> EntityStatistic(String SqlQuerryToDB) throws SQLException {
+        Statement statement = conn.createStatement();
+        ResultSet resultSet = statement.executeQuery(SqlQuerryToDB);
+        List<Statistic> StatisticEntities = new ArrayList<>();
+
+        while (resultSet.next()) {
+            StatisticEntities.add(new Statistic(resultSet.getString("maker"),
+                    resultSet.getString("sold"),
+                    (Double.parseDouble(resultSet.getString("sold"))* Double.parseDouble(resultSet.getString("price")))
+            ));
+        }
+        return StatisticEntities;
+    }
+
     //Follow price
-    public List<LaptopEntity> FindLaptopFromPrice(Float price1, Float price2) {
-        List<LaptopEntity> laptopEntities = new ArrayList<LaptopEntity>();
+    public List<LaptopEntity> FindLaptopFromPrice(Float price1, Float price2) throws SQLException {
+
         if (price2 == null && price1 == null) {
             return null;
         }
         String sql = "SELECT * FROM store_cms_plusplus.laptop WHERE price BETWEEN " + price1 + " AND " + price2 + ";";
-        try {
-            Statement statement = conn.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
 
-            EntityLaptop(sql);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return laptopEntities;
+        return EntityLaptop(sql);
     }
 
     //Follow Maker and ssd
@@ -152,6 +177,14 @@ public class LaptopService {
             throwables.printStackTrace();
         }
         return laptopList;
+    }
+
+    public List<Counter> getCounterByMaker() throws SQLException {
+        return EntityCounter("SELECT maker, `type`, COUNT(`type`) As quantity FROM `store_cms_plusplus`.laptop GROUP BY `type` ORDER BY quantity DESC;");
+    }
+
+    public List<Statistic>  getStatisticByMaker() throws SQLException {
+        return EntityStatistic("SELECT maker, sold, price FROM `store_cms_plusplus`.laptop GROUP BY `maker`;");
     }
 
     public void DisplayName(List<LaptopEntity> laptopEntityList){
