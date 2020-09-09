@@ -1,6 +1,8 @@
 package SearchLaptopFromReques;
 
+import SearchLaptopFromReques.models.Counter;
 import SearchLaptopFromReques.models.LaptopEntity;
+import SearchLaptopFromReques.models.Statistic;
 import SearchLaptopFromReques.services.LaptopService;
 
 import java.sql.Connection;
@@ -30,12 +32,35 @@ public class Test {
 
         LaptopService laptopService = new LaptopService(connection);
 
-        List<LaptopEntity> laptopEntityListPrice = laptopService.FindLaptopFromPrice(10000000f,40000000f);
-        System.out.println("Laptop theo gía từ 10.000.000 => 40.000.000 là: ");
-        laptopService.DisplayName(laptopEntityListPrice);
+//        List<LaptopEntity> laptopEntityListPrice = null;
+//        try {
+//            laptopEntityListPrice = laptopService.FindLaptopFromPrice(10000000f,40000000f);
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+//        System.out.println("Laptop theo gía từ 10.000.000 => 40.000.000 là: ");
+//        laptopService.DisplayName(laptopEntityListPrice);
+//
+//        List<LaptopEntity> laptopEntityClassesListSSD_MAKER = laptopService.FindLaptopFromSSD_MAKER("ACER","");
+//        System.out.println("Laptop theo hãng và ssd là:");
+//        laptopService.DisplayName(laptopEntityClassesListSSD_MAKER);
 
-        List<LaptopEntity> laptopEntityClassesListSSD_MAKER = laptopService.FindLaptopFromSSD_MAKER("ACER","");
-        System.out.println("Laptop theo hãng và ssd là:");
-        laptopService.DisplayName(laptopEntityClassesListSSD_MAKER);
+//        System.out.println("loai laptop theo loai cua moi hang la");
+//        try {
+//            for (Counter c :laptopService.getCounterByMaker()) {
+//                System.out.println(c.toString());
+//            }
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+
+        System.out.println("thống kê số lượng, số tiền bán được của mỗi hãng la: ");
+        try {
+            for (Statistic s :laptopService.getStatisticByMaker()) {
+                System.out.println(s.toString());
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }
