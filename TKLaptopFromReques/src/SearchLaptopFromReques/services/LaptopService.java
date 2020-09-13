@@ -4,12 +4,11 @@ import SearchLaptopFromReques.models.Counter;
 import SearchLaptopFromReques.models.LaptopEntity;
 import SearchLaptopFromReques.models.Statistic;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class LaptopService {
@@ -87,7 +86,7 @@ public class LaptopService {
 
     //Follow Maker and ssd
     public List<LaptopEntity> FindLaptopFromSSD_MAKER(String maker, String ssd) {
-        ArrayList<LaptopEntity> laptopEntities = new ArrayList<LaptopEntity>();
+        List<LaptopEntity> laptopEntities = new ArrayList<LaptopEntity>();
         if (maker == null && ssd == null) {
             return null;
         }
@@ -95,11 +94,11 @@ public class LaptopService {
         String sql2 = "SELECT * FROM store_cms_plusplus.laptop WHERE maker =  '" + maker + "' OR ssd = '" + ssd + "';";
         try {
             if (maker == null) {
-                EntityLaptop(sql1);
+                laptopEntities = EntityLaptop(sql1);
             } else if (ssd == null) {
-                EntityLaptop(sql1);
+                laptopEntities = EntityLaptop(sql1);
             } else {
-                EntityLaptop(sql2);
+                laptopEntities = EntityLaptop(sql2);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -187,10 +186,39 @@ public class LaptopService {
         return EntityStatistic("SELECT maker, sold, price FROM `store_cms_plusplus`.laptop GROUP BY `maker`;");
     }
 
-    public void DisplayName(List<LaptopEntity> laptopEntityList){
-        for (LaptopEntity lt: laptopEntityList) {
+    public void DisplayName(List<LaptopEntity> laptopEntityList) {
+        for (LaptopEntity lt : laptopEntityList) {
             System.out.println(lt.getName());
         }
+    }
+
+    public void InsertDatatoDB(String name, String url, String maker, String type, String ram, String cpu, String ssd,
+                               String hdd, Float price, String card, String screen_resolution, Float screen_size,
+                               Integer sold) throws SQLException {
+
+        String sql = "insert ignore into `store_cms_plusplus`.laptop(`name`, url, maker, `type`, ram, `cpu`, ssd, hdd, price, card, screen_resolution, screen_size, sold)" +
+                "values('"+name+"','"+url+"','"+maker+"','"+type+"','"+ram+"','"+cpu+"','"+ssd+"','"+hdd+"','"+price+"','"+card+"','"+screen_resolution+"','"+screen_size+"','"+sold+"');";
+        Statement statement = conn.createStatement();
+        statement.execute(sql);
+    }
+
+    public LaptopEntity UpdateData(String idlaptop, int increasesold){
+        Statement statement = null;
+        LaptopEntity update = null;
+        try {
+            String sql1 = "select name, sold, last_updated_timestamp form  `store_cms_plusplus`.laptop where id = "+ idlaptop +";";
+            statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql1);
+
+            String sql = "update `store_cms_plusplus`.laptop set sold ="+(increasesold + resultSet.getInt("sold"))+ "where id = "+idlaptop+";";
+            statement.execute(sql);
+
+            resultSet = statement.executeQuery(sql1);
+            update = new LaptopEntity(resultSet.getString("name"),resultSet.getInt("sold"),resultSet.getTimestamp("last_update_timestamp"));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return update;
     }
 }
 
