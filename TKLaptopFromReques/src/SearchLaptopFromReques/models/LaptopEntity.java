@@ -1,5 +1,6 @@
 package SearchLaptopFromReques.models;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class LaptopEntity {
@@ -16,6 +17,14 @@ public class LaptopEntity {
     private String ScreenResolution;
     private float ScreenSize;
     private int sold;
+    private Timestamp created_timestamp;
+    private Timestamp last_update_timestamp;
+
+    public LaptopEntity(String name, int sold, Timestamp last_update_timestamp) {
+        this.name = name;
+        this.sold = sold;
+        this.last_update_timestamp = last_update_timestamp;
+    }
 
     public LaptopEntity(String name, String url, String maker, String type, String ram, String cpu, String ssd, String hdd, float price, String card, String screenResolution, float screenSize, int sold) {
         this.name = name;
